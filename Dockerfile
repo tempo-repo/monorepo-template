@@ -34,9 +34,9 @@ FROM node-slim AS runner
 
 WORKDIR /runner/frontend
 
-COPY --from=build-frontend  /builder/repo/apps/frontend/public              ./public
+COPY --from=build-frontend  /builder/repo/apps/frontend/public              ./repo/apps/frontend/public
 COPY --from=build-frontend  /builder/repo/apps/frontend/.next/standalone    ./
-COPY --from=build-frontend  /builder/repo/apps/frontend/.next/static        ./.next/static
+COPY --from=build-frontend  /builder/repo/apps/frontend/.next/static        ./repo/apps/frontend/.next/static
 
 # Run production image
 COPY docker/supervisord.conf /etc/supervisord.conf

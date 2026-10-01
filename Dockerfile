@@ -9,13 +9,12 @@ ENV NODE_ENV=production
 # Install deps
 FROM node-fat AS deps
 WORKDIR /builder
-# Copy root package info
+# Copy all package.json files
 COPY package.json yarn.lock ./
-# Copy frontend deps
 COPY repo/apps/frontend/package.json    repo/apps/frontend/package.json
+COPY repo/packages/types/package.json   repo/packages/types/package.json
 # Run the actual install command
 RUN yarn --frozen-lockfile
-# Copy turborepo config
 COPY turbo.json ./
 
 # Assemble frontend

@@ -1,9 +1,11 @@
 # Pull images for various tasks
 FROM node:24.16.0-bookworm AS node-fat
 RUN yarn config set network-timeout 600000 -g
+ENV NODE_ENV=production
 
 # Production only image
 FROM node:24.16.0-alpine3.24 AS node-slim
+ENV NODE_ENV=production
 
 # Install deps
 FROM node-fat AS deps

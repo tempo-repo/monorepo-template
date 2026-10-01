@@ -40,7 +40,10 @@ COPY --from=build-frontend  /builder/repo/apps/frontend/.next/static        ./re
 
 # Run production image
 COPY docker/supervisord.conf /etc/supervisord.conf
+COPY docker/entrypoint.sh    /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 USER root
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
 
 #WORKDIR /runner

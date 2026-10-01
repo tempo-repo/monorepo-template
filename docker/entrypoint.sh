@@ -21,7 +21,7 @@ replace_placeholder() {
     | xargs -0 sed -i "s|$placeholder|$value|g" 2>/dev/null
 }
 
-replace_placeholder "http://replacemelater.com" "$NEXT_PUBLIC_CANONICAL_URL"
+replace_placeholder "http://replacemelater.com" "${NEXT_PUBLIC_CANONICAL_URL:-/}"
 
 echo "Placeholder replacement complete. Starting application..."
 

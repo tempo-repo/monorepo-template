@@ -17,8 +17,17 @@ replace_placeholder() {
   # matches one level deep and silently misses nested chunk/page files.
   # find walks the whole tree so baked-in NEXT_PUBLIC_* values are replaced
   # everywhere, including server chunks and prerendered .html/.rsc output.
-  find "$NEXT_DIR" \( -name '*.js' -o -name '*.html' -o -name '*.rsc' \) -type f -print0 2>/dev/null \
-    | xargs -0 sed -i "s|$placeholder|$value|g" 2>/dev/null
+  if [ "$value" = "/" ]; then
+    # The placeholder is baked in as an origin immediately followed by a
+    # path (e.g. "http://placeholder.com/_next/..."). Plain substitution
+    # would turn that into "/" + "/_next/..." = "//_next/...", so collapse
+    # "placeholder/" to a single "/" instead of duplicating the slash.
+    find "$NEXT_DIR" \( -name '*.js' -o -name '*.html' -o -name '*.rsc' \) -type f -print0 2>/dev/null \
+      | xargs -0 sed -i -e "s|$placeholder/|/|g" -e "s|$placeholder|/|g" 2>/dev/null
+  else
+    find "$NEXT_DIR" \( -name '*.js' -o -name '*.html' -o -name '*.rsc' \) -type f -print0 2>/dev/null \
+      | xargs -0 sed -i "s|$placeholder|$value|g" 2>/dev/null
+  fi
 }
 
 replace_placeholder "http://replacemelater.com" "${NEXT_PUBLIC_CANONICAL_URL:-/}"

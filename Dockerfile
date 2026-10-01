@@ -5,6 +5,7 @@ RUN yarn config set network-timeout 600000 -g
 # Production only image
 FROM node:24.16.0-alpine3.24 AS node-slim
 ENV NODE_ENV=production
+RUN apk add --no-cache supervisor
 
 # Install deps
 FROM node-fat AS deps
@@ -12,7 +13,7 @@ WORKDIR /builder
 # Copy all package.json files
 COPY package.json yarn.lock ./
 COPY repo/apps/frontend/package.json    repo/apps/frontend/package.json
-COPY repo/packages/types/package.json   repo/packages/types/package.json
+COPY repo/packages/types                repo/packages/types
 # Run the actual install command
 RUN yarn --frozen-lockfile
 COPY turbo.json ./
@@ -28,4 +29,20 @@ COPY repo/apps/frontend/tsconfig.build.json repo/apps/frontend/tsconfig.build.js
 COPY repo/apps/frontend/tsconfig.json       repo/apps/frontend/tsconfig.json
 RUN yarn turbo run build --filter=@apps/frontend
 
-CMD ["tail", "-f", "/dev/null"]
+# Production image
+FROM node-slim AS runner
+
+WORKDIR /runner/frontend
+
+COPY --from=build-frontend  /builder/repo/apps/frontend/public              ./public
+COPY --from=build-frontend  /builder/repo/apps/frontend/.next/standalone    ./
+COPY --from=build-frontend  /builder/repo/apps/frontend/.next/static        ./.next/static
+
+# Run production image
+COPY docker/supervisord.conf /etc/supervisord.conf
+USER root
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+
+#WORKDIR /runner
+#USER root
+#CMD ["tail", "-f", "/dev/null"]

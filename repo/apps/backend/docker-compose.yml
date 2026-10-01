@@ -1,0 +1,58 @@
+name: nestjs-template
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: nestjs-template-compose-db
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
+      - TZ
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      database:
+        ipv4_address: 172.20.1.6
+
+  backend:
+    build: .
+    container_name: nestjs-template-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-4242}:${PORT:-4242}"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      database:
+        ipv4_address: 172.20.1.5
+    environment:
+      - DATABASE_URL=postgresql://${PGUSER}:${PGPASSWORD}@172.20.1.6:5432/${PGDATABASE}?schema=public
+      - JWT_SECRET=${JWT_SECRET}
+      - ARGON_SECRET=${ARGON_SECRET}
+      - APP_HOST=${APP_HOST}
+      - TZ
+      - ALLOW_CROSS_ORIGIN
+      - PORT=${PORT:-4242}
+
+volumes:
+  db_data:
+
+networks:
+  # 172.20.1.1-254
+  # Backend     172.20.1.5
+  # Postgres    172.20.1.6
+  database:
+    ipam:
+      config:
+        - subnet: "172.20.0.0/16"
+          gateway: "172.20.0.1"
+          ip_range: "172.20.1.0/24"

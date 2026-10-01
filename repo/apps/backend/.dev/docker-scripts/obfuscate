@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+#
+# This script tries to minimize folder size by running
+# prune scripts on it.
+#
+
+ROOT=$(pwd)
+FOLDER=$ROOT/$1
+
+folder_size() {
+  npx --yes fast-folder-size $FOLDER
+}
+
+INITIAL_SIZE=$(folder_size)
+
+if [ ! -d "$FOLDER" ]; then
+  echo "⚠️ Folder \"$FOLDER\" does not exist."
+  exit 1
+fi
+
+echo "📁 Obfuscating \"$FOLDER\""
+
+find $FOLDER -type f -name "*.ts" -delete
+find $FOLDER -type f -name "*.d.ts" -delete
+echo "🗑️ Removed all TypeScript files"
+
+echo "⬇️ Starting minify script"
+if [[ "$(basename $FOLDER)" == "node_modules" ]]; then
+  IGNORED_MODULES="swagger-ui-dist"
+  npx --yes modclean -n default:safe,default:caution --run -i "$IGNORED_MODULES"
+  npx --yes diarrhea -n default:safe,default:caution --run -i "$IGNORED_MODULES"
+else
+  npx --yes minify-all-js $FOLDER --json
+fi
+
+MINIFIED_SIZE=$(folder_size)
+SAVED=$(( $INITIAL_SIZE - $MINIFIED_SIZE ))
+
+echo "📦 Saved disk size: $(npx --yes pretty-bytes-cli $SAVED)"

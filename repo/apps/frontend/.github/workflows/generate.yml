@@ -1,0 +1,36 @@
+name: Generate assets
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: "⬇️ Fetch resources"
+        uses: actions/checkout@v6
+
+      - name: "🧩 Install Node 22"
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: "🐱 Auth Git user"
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: "📦 Install deps"
+        run: yarn install --frozen-lockfile
+
+      - name: "🧵 Calculate Node.js version semver"
+        run: yarn script:semver
+
+      - name: "⬆️ Push changes"
+        uses: ad-m/github-push-action@master
+        with:
+          branch: ${{ github.ref_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

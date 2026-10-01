@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+    font-size: 16px;
+}
+
+@theme {
+  --color-primary-bg: white;
+  --color-primary-font: black;
+}
+
+@layer theme {
+  html.dark {
+    --color-primary-bg: black;
+    --color-primary-font: white;
+  }
+}
+
+body {
+  @apply bg-primary-bg text-primary-font;
+}

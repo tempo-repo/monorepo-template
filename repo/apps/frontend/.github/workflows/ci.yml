@@ -1,0 +1,48 @@
+name: Repo CI flow
+on:
+  push: null
+  pull_request:
+    branches:
+      - main
+jobs:
+  ci:
+    strategy:
+      matrix:
+        NODE_VERSION:
+          - 22.22.1
+          - 24.0.0
+          - 26.0.0
+    runs-on: ubuntu-latest
+    name: ci-node-${{ matrix.NODE_VERSION }}
+    permissions:
+      contents: read
+    steps:
+      - name: ✅ Checkout the repo
+        uses: actions/checkout@v4
+      - name: 🧩 Install Node.js v${{ matrix.NODE_VERSION }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.NODE_VERSION }}
+      - name: 🐱 Install Yarn (if needed)
+        run: |
+          if ! command -v yarn &> /dev/null; then
+            npm i -g yarn
+            echo "📦 Installed Yarn to runner" 
+          fi
+      - name: 📦 Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: 🔨 App can be built
+        run: |
+          echo "NEXT_PUBLIC_CANONICAL_URL=\"http://localhost:3000\"" >> .env
+          yarn build
+      - name: 📕 Linting
+        run: yarn lint --max-warnings=0
+      - name: 🧪 Run coverage
+        run: yarn vitest run --coverage
+      - name: ✍️ Report coverage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          vite-config-path: configs/vitest.config.ts
+      - name: 📚 Storybook can be built
+        run: yarn build-storybook

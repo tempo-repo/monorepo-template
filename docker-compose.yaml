@@ -1,0 +1,6 @@
+version: "2.4"
+
+services:
+  monorepo:
+    image: monorepo-template-app:0.0.1
+    restart: unless-stopped

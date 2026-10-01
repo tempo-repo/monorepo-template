@@ -6,5 +6,4 @@ docker buildx build \
   -t monorepo-template-app:0.0.1 \
   .
 
-docker compose down
 docker compose up -d

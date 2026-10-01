@@ -9,5 +9,10 @@ WORKDIR /builder
 COPY    package.json yarn.lock \
         turbo.json \
         ./
+# Copy frontend deps
+COPY repo/apps/frontend/package.json    repo/apps/frontend/package.json
+COPY repo/apps/frontend/yarn.lock       repo/apps/frontend/yarn.lock
+# Run the actual install command
+RUN yarn --frozen-lockfile
 
 CMD ["tail", "-f", "/dev/null"]

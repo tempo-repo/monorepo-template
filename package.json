@@ -11,5 +11,9 @@
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
     "turbo": "^2.11.6"
-  }
+  },
+  "workspaces": [
+    "repo/apps/*",
+    "repo/packages/*"
+  ]
 }

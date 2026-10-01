@@ -10,7 +10,11 @@
   },
   "packageManager": "yarn@1.22.22",
   "devDependencies": {
-    "turbo": "^2.11.6"
+    "turbo": "^2.11.6",
+    "typescript": "^6.0.3"
+  },
+  "resolutions": {
+    "typescript": "^6.0.3"
   },
   "workspaces": [
     "repo/apps/*",

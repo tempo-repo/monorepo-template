@@ -1,0 +1,11 @@
+{
+  "name": "monorepo-template",
+  "version": "0.0.1",
+  "description": "A monorepo example",
+  "author": "XenoPOMP",
+  "license": "UNLICENSED",
+  "private": false,
+  "devDependencies": {
+    "turbo": "^2.11.6"
+  }
+}

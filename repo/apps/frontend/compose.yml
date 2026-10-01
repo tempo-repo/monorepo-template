@@ -1,8 +1,0 @@
-name: nextjs-app
-
-services:
-  frontend:
-    build: .
-    container_name: nextjs-app-frontend
-    ports:
-      - "${PORT:-3000}:3000"

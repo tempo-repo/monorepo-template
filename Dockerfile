@@ -1,6 +1,6 @@
 # Pull images for various tasks
-FROM node:24.16-ubuntu AS node-fat
-FROM node:24.16-alpine AS node-slim
+FROM node:24.16.0-bookworm AS node-fat
+FROM node:24.16.0-alpine3.24 AS node-slim
 
 # Install deps
 FROM node-fat AS builder

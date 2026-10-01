@@ -15,4 +15,13 @@ COPY repo/apps/frontend/yarn.lock       repo/apps/frontend/yarn.lock
 # Run the actual install command
 RUN yarn --frozen-lockfile
 
+# Assemble frontend
+FROM deps AS build-frontend
+COPY repo/apps/frontend/public              repo/apps/frontend/public
+COPY repo/apps/frontend/src                 repo/apps/frontend/src
+COPY repo/apps/frontend/postcss.config.mjs  repo/apps/frontend/postcss.config.mjs
+COPY repo/apps/frontend/tsconfig.build.json repo/apps/frontend/tsconfig.build.json
+COPY repo/apps/frontend/tsconfig.json       repo/apps/frontend/tsconfig.json
+RUN yarn --cwd repo/apps/frontend build
+
 CMD ["tail", "-f", "/dev/null"]

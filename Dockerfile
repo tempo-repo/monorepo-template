@@ -17,35 +17,3 @@ COPY repo/packages/types                repo/packages/types
 # Run the actual install command
 RUN yarn --frozen-lockfile
 COPY turbo.json ./
-
-# Assemble frontend
-FROM deps AS build-frontend
-ENV NEXT_PUBLIC_CANONICAL_URL=http://replacemelater.com
-COPY repo/apps/frontend/public              repo/apps/frontend/public
-COPY repo/apps/frontend/src                 repo/apps/frontend/src
-COPY repo/apps/frontend/next.config.ts      repo/apps/frontend/next.config.ts
-COPY repo/apps/frontend/postcss.config.mjs  repo/apps/frontend/postcss.config.mjs
-COPY repo/apps/frontend/tsconfig.build.json repo/apps/frontend/tsconfig.build.json
-COPY repo/apps/frontend/tsconfig.json       repo/apps/frontend/tsconfig.json
-RUN yarn turbo run build --filter=@apps/frontend
-
-# Production image
-FROM node-slim AS runner
-
-WORKDIR /runner/frontend
-
-COPY --from=build-frontend  /builder/repo/apps/frontend/public              ./repo/apps/frontend/public
-COPY --from=build-frontend  /builder/repo/apps/frontend/.next/standalone    ./
-COPY --from=build-frontend  /builder/repo/apps/frontend/.next/static        ./repo/apps/frontend/.next/static
-
-# Run production image
-COPY docker/supervisord.conf /etc/supervisord.conf
-COPY docker/entrypoint.sh    /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-USER root
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
-
-#WORKDIR /runner
-#USER root
-#CMD ["tail", "-f", "/dev/null"]

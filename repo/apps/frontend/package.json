@@ -10,7 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:production": "yarn start",
+    "start:production": "node .next/standalone/server.js",
     "lint": "eslint",
     "vitest": "vitest --config ./configs/vitest.config.ts",
     "prepare": "husky",

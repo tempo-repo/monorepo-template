@@ -36,6 +36,6 @@ COPY repo/apps/backend/tsconfig.build.json  repo/apps/backend/tsconfig.build.jso
 COPY repo/apps/backend/tsconfig.json        repo/apps/backend/tsconfig.json
 COPY repo/apps/backend/webpack.config.js    repo/apps/backend/webpack.config.js
 
-RUN turbo run build
+RUN yarn turbo run build
 
-CMD ["turbo", "run", "start:production", "--filter", "@apps/frontend"]
+CMD ["yarn", "turbo", "run", "start:production", "--filter", "@apps/frontend"]

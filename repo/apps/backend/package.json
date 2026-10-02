@@ -13,6 +13,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node ./dist/main.js",
     "start:migrate:prod": "npx prisma migrate deploy && yarn start:prod",
+    "start:production": "yarn start:migrate:prod",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "yarn test --watch",

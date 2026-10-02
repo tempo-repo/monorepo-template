@@ -13,7 +13,10 @@ WORKDIR /builder
 # Copy all package.json files
 COPY package.json yarn.lock ./
 COPY repo/apps/frontend/package.json    repo/apps/frontend/package.json
+COPY repo/apps/backend/package.json     repo/apps/backend/package.json
 COPY repo/packages/types                repo/packages/types
 # Run the actual install command
-RUN yarn --frozen-lockfile
+#RUN yarn --frozen-lockfile
 COPY turbo.json ./
+
+CMD ["tail", "-f", "/dev/null"]

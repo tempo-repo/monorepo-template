@@ -10,6 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:production": "yarn start",
     "lint": "eslint",
     "vitest": "vitest --config ./configs/vitest.config.ts",
     "prepare": "husky",

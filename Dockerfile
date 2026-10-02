@@ -39,6 +39,6 @@ COPY repo/apps/backend/webpack.config.js    repo/apps/backend/webpack.config.js
 RUN yarn turbo run build
 
 FROM node-slim AS runner
-COPY --from=builder /builder /runner
-WORKDIR /runner
+COPY --from=builder /builder /app
+WORKDIR /app
 CMD ["yarn", "turbo", "run", "start:production", "--filter", "@apps/frontend"]
